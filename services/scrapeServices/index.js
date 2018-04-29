@@ -16,14 +16,13 @@ function scrapeSeriesForEpisodeLinks(link) {
                 var $ = cheerio.load(html);
                 // server -> all episodes on server
                 var availableServerIDs = new Map(); 
-
                 var ts = $('html').get(0).attribs["data-ts"];
-                console.log(ts);
                 var serverElements = $('div.widget-body').find($('div.server')); 
                 
                 serverElements.each(function(i, elem) {
                     scrapeServerInformation(elem, availableServerIDs, ts);
                 })
+                availableServerIDs.set('ts', ts);
                 resolve(availableServerIDs);
             }
         })
