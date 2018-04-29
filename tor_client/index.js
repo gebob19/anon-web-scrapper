@@ -30,7 +30,6 @@ class Tor {
     if (this.tor === null) {
       return new Promise((resolve, reject) => {
         if (this.debug) console.log('starting tor...');
-
         const tor = spawn('tor');
 
         tor.stdout.on('data', data => {
