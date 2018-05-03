@@ -1,4 +1,5 @@
-config.js
+config/*
+tempdoc.txt
 .DS_Store
 
 # Logs

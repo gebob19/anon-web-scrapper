@@ -61,25 +61,18 @@ async function scrapeServerInformation(elem, availableServerIDs, ts) {
     availableServerIDs.set(serverName, serverInfo);
 }
 
-/*
-Filters unwated information on an episode
-ex.
-Input:
-{   
-    'data-id': '',
-    'data-base': '25',
-    'data-comment': '25',
-    'data-toggle': 'tooltip',
-    'data-title': 'Dec 28, 2016 - 05:09',
-    href: '/watch/tvshow/tv_id' 
+async function scrapeMP4(link) {
+    return new Promise((resolve, reject) => {
+        request(link, function(err, resp, html) {
+            if (!err && resp.statusCode == 200) {
+                var $ = cheerio.load(html);
+                var videoPlayer = $('#videojs');
+                resolve(videoPlayer.children()[0].attribs.src);
+            }
+        })
+    })
 }
 
-Output:
-{   
-    'data-id': '',
-    'data-title': 'Dec 28, 2016 - 05:09',
-    href: '/watch/tvshow/tv_id' ,
-} */
 function filter(episodeInfo) {
     return {
         'dataID' : episodeInfo['data-id'],
@@ -91,4 +84,5 @@ function filter(episodeInfo) {
 
 module.exports = {
     scrapeSeriesForEpisodeLinks,
+    scrapeMP4,
 };

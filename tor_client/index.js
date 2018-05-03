@@ -7,7 +7,7 @@ class Tor {
     this.tor = null;
   }
 
-  startDebuger() {
+  debuger() {
     this.debug = true;
   }
 
@@ -26,7 +26,7 @@ class Tor {
   /**
    * Returns promise of executing tor
    */
-  startTor() {
+  start() {
     if (this.tor === null) {
       return new Promise((resolve, reject) => {
         if (this.debug) console.log('starting tor...');
