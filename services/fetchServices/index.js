@@ -1,16 +1,18 @@
 const config = require('../../config');
 const util = require('util');
 var tr = require('tor-request');
+var firebaseServices = require('../firebaseServices');
 
-const knownMysteries = [1427, 1474, 1430, 1382, 1383];
-
-async function fetchLink(episodeID, serverID, ts) {
+async function fetchLink(episodeID, serverID, ts, tor) {
     return new Promise(async (resolve, reject) => {
         //console.log(episodeID, serverID, ts);
+
+        var knownMysteries = await firebaseServices.getKnownMysteries();
         // attempt with known mysteries
         var resp0 = await attemptGivenMysteries(
             ts, episodeID, serverID, knownMysteries
         );
+        tor.incrementRequestCount(knownMysteries.length);
         var link = findLink(resp0);
         if (link) 
             return resolve(link);
@@ -22,6 +24,7 @@ async function fetchLink(episodeID, serverID, ts) {
             ts, episodeID, serverID, mysteryAttempt
         );
         var link = findLink(resp1);
+        tor.incrementRequestCount(mysteryAttempt.length);
         if (link) 
             return resolve(link);
 
@@ -31,6 +34,7 @@ async function fetchLink(episodeID, serverID, ts) {
             ts, episodeID, serverID, mysteryAttempt
         );
         var link = findLink(resp2);
+        tor.incrementRequestCount(mysteryAttempt.length);
         if (link) 
             return resolve(link);
 
@@ -40,6 +44,7 @@ async function fetchLink(episodeID, serverID, ts) {
             ts, episodeID, serverID, mysteryAttempt
         );
         var link = findLink(resp2);
+        tor.incrementRequestCount(mysteryAttempt.length);
         if (link) 
             return resolve(link);
 
@@ -50,7 +55,7 @@ async function fetchLink(episodeID, serverID, ts) {
 async function attemptGivenMysteries(ts, episodeID, serverID, mysteries) {
     return await Promise.all(mysteries.map(async mystery => {
         var requestLink = getRequestLink(ts, episodeID, serverID, mystery);
-        var link = await apiRequest(requestLink);
+        var link = await apiRequest(requestLink, mystery);
         return link;
     })).catch(err => {
         console.log(err);
@@ -64,12 +69,13 @@ function getMysteryAttempt(startValue, size) {
     return mysteryAttempt;
 }
 
-function apiRequest(url) {
+function apiRequest(url, mystery) {
     return new Promise((resolve, reject) => {
         tr.request(url, function(err, resp, html) {
             if (!err && resp.statusCode == 200) {
                 var JSONresp = JSON.parse(html);
                 if (JSONresp.hasOwnProperty('target')) {
+                    firebaseServices.addNewMystery(mystery);
                     resolve(JSONresp.target);
                 } else {
                     resolve('err');

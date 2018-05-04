@@ -5,10 +5,15 @@ class Tor {
     this.isReady = false;
     this.debug = false;
     this.tor = null;
+    this.numberOfRequests = 0;
   }
 
   debuger() {
     this.debug = true;
+  }
+
+  incrementRequestCount(number) {
+    this.numberOfRequests += number;
   }
 
   terminate() {
