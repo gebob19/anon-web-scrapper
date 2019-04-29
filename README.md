@@ -17,10 +17,11 @@ I noticed that a simple GET request was used to fetch the video link of the curr
 For any given episode I was able to find and scrap all but one integer parameter, leading to the unknown integer parameter being called 'mystery'.
 </br>
 </br>
-After testing more, I found that at most this mystery parameter is 4 digits, is usually around the values of 1300-1500, and some mystery parameters are reused. I also realised that only when the mystery parameter was correct the JSON response would contain a property of 'target' which would
-contain the video link.
-Using TOR to mask my IP address, I would first attempt to fetch with the 'known-mysteries' (mystery parameters which have worked in previous
-scrapes), and then attempt a brute-force algorithm to get the response with the video link.
+After testing more, I found that at most this mystery parameter is 4 digits, is usually around the values of 1300-1500, and some mystery parameters are reused. I also realised that only when the mystery parameter was correct the JSON response would contain a property of 'target' which would contain the video link. 
+</br>
+My initial attempt was a simple brute force attempt to find the correct mystery parameter, and then save the correct parameter in a database. This lead a large amount of requests/second which lead to my IP being blocked from access to their website.
+</br>
+To solve this problem I used TOR to mask my IP address. I would first attempt to fetch with the 'known-mysteries' (mystery parameters which have worked in previous scrapes), and then attempt a brute-force algorithm to get the response with the video link. Approximately every 500 episodes scraped I would reset TOR for a new IP address to continue to scrape.
 </br>
 </br>
 <b>Success!</b>
